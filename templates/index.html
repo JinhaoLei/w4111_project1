@@ -9,13 +9,7 @@
 
 <body>
  <h1>Some famous Computer Scientists</h1>
-  <div>{{result}}</div>
 
-  <div>
-    {% for n in result %}
-    <div>{{n}}</div>
-    {% endfor %}
-  </div>
 {% if sresult %}
 <table border="1">
   <tr>
@@ -29,6 +23,7 @@
   </tr>
   {% endfor %}
 </table>
+<p>{{len_result}} results</p>>
 {% endif %}
 
 

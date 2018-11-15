@@ -174,7 +174,7 @@ def search():
   #         Below is a hard-coded example.        
 
   context = [{'id':'0', 'name':'Avatar','year':'2009'}]
-  return render_template('index.html', sresult=context)
+  return render_template('index.html', sresult=context, len_result=len(context))
 
 @app.route('/movie', methods=['GET'])
 def movie():
