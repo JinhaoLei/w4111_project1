@@ -1,0 +1,51 @@
+<html>
+  <style>
+    body{ 
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+
+<body>
+ <h1>Some famous Computer Scientists</h1>
+  <div>{{result}}</div>
+
+  <div>
+    {% for n in result %}
+    <div>{{n}}</div>
+    {% endfor %}
+  </div>
+{% if sresult %}
+<table border="1">
+  <tr>
+    <th>Name</th>
+    <th>Year</th>
+  </tr>
+  {% for n in sresult %}
+  <tr>
+    <td><a href="/movie?id={{n.id}}">{{n.name}}</a></td>
+    <td>{{n.year}}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+
+{% if session.logged_in %}
+<p><a href="/seefavor">see my favorites</a></p>
+<p><a href="/logout">logout</a></p>
+{% else %}
+<p>please login</p>
+<p><a href="/tologin">login</a></p>
+<p>please sign up</p>
+<p><a href="/tosignup">sign up</a></p>
+{% endif %}
+<form method="GET" action="/search">
+<p>Search: <input type="text" name="name"> <input type="submit" value="search"></p>
+</form>
+
+</body>
+
+
+</html>
