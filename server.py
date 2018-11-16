@@ -187,6 +187,8 @@ def movie():
   #      Given the movie id above, you should return all attributes of this movie plus four extra fields.
   #      The four extra fields are 'iflike', 'iffavor', 'num_like', 'num_favor'. 'iflike' and 'iffavor'
   #      should be set as 0. 'num_like' and 'num_favor' should be set as their true numbers recored in our db.
+  #      Please note that you should also return the director, director id, stars and stars id for this movie.
+  #      These four attributes are not saved in movie table directly.
   #Returns: A dict. Below is a hard-coded example.    
   
   context = {'id':'0','name':'Avatar','director':'James_Cameron', 'director_id':0, \
