@@ -1,0 +1,45 @@
+<html>
+  <style>
+    body{ 
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+
+<body>
+
+
+ <table border="1">
+  <tr>
+    <td>Name</td>
+    <td>{{data.name}}</td>
+  </tr>
+  <tr>
+    <td>Country</td>
+    <td>{{data.country}}</td>
+  </tr>
+  <tr>
+    <td>Gender</td>
+    <td>{{data.gender}}</td>
+  </tr>
+  <tr>
+    <td>Birth Date</td>
+    <td>{{data.birth_date}}</td>
+  </tr>
+  <tr>
+    <td>Bio</td>
+    <td>{{data.bio}}</td>
+  </tr>
+ 
+
+</table>
+<img src={{ url_for('static', filename = data.profile_pic) }} >
+
+</head>
+<body >
+
+</body>
+
+
+</html>

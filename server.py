@@ -189,7 +189,8 @@ def movie():
   #      should be set as 0. 'num_like' and 'num_favor' should be set as their true numbers recored in our db.
   #Returns: A dict. Below is a hard-coded example.    
   
-  context = {'id':'0','did':'0','name':'Avatar','duration':'178','color':'COLOR',\
+  context = {'id':'0','name':'Avatar','director':'James_Cameron', 'director_id':0, \
+  'stars':'CCH Pounder', 'stars_id':10, 'duration':'178','color':'COLOR',\
   'content_rating':'PG-13','year':'2009','language':'English','country':'USA',\
   'budget':'237000000','gross':'760505847','score':'7.9',\
   'imdb_link':'http://www.imdb.com/title/tt0499549/?ref_=fn_tt_tt_1',\
@@ -226,6 +227,24 @@ def movie():
   comments = [{'user_name':'leijh', 'time':'2018-10-01 15:39:20', 'content':'I like this movie.'},{'user_name':'leijh2', 'time':'2018-10-01 15:44:20', 'content':'I don\'t like this movie.'}]
 
   return render_template("movie.html", data=context, comments=comments)
+
+
+@app.route('/people', methods=['GET'])
+def people():
+
+  id = int(request.values.get("id"))
+
+  #TODO: This route needs to get the detailed information for a person and display it.
+  #      Given the people id above, you should return some attributes of this person like the example below.
+  #Returns: A dict. Below is a hard-coded example.    
+  
+  context = {'id':'0','name':'James Cameron','country':'Canada','gender':'M',\
+  'birth_date':'1954-08-16','profile_pic':'James_Cameron.jpg',\
+  'bio':'James Francis Cameron (born August 16, 1954) is a Canadian filmmaker, philanthropist, and deep-sea explorer.'
+  }
+  
+  return render_template("people.html", data=context)
+
 
 @app.route('/tologin')
 def do_admin_login():
