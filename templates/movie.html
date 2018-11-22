@@ -1,75 +1,10 @@
 <html>
   <style>
     body{ 
-      font-size: 15pt;
+      font-size: 12pt;
       font-family: arial;
     }
   </style>
-
-
-<body>
- <h1>Some famous Computer Scientists</h1>
-
- <table border="1">
-  <tr>
-    <td>Name</td>
-    <td>{{data.name}}</td>
-  </tr>
-  <tr>
-    <td>Director</td>
-    <td><a href="/people?id={{data.director_id}}">{{data.director}}</a></td>
-  </tr>
-  <tr>
-    <td>Stars</td>
-    <td><a href="/people?id={{data.stars_id}}">{{data.stars}}</a></td>
-  </tr>
-  <tr>
-    <td>Duration</td>
-    <td>{{data.year}}</td>
-  </tr>
-  <tr>
-    <td>Color</td>
-    <td>{{data.color}}</td>
-  </tr>
-  <tr>
-    <td>Content Rating</td>
-    <td>{{data.content_rating}}</td>
-  </tr>
-  <tr>
-    <td>Year</td>
-    <td>{{data.year}}</td>
-  </tr>
-  <tr>
-    <td>Language</td>
-    <td>{{data.language}}</td>
-  </tr>
-  <tr>
-    <td>Country</td>
-    <td>{{data.country}}</td>
-  </tr>
-  <tr>
-    <td>Budget</td>
-    <td>{{data.budget}}</td>
-  </tr>
-  <tr>
-    <td>Gross</td>
-    <td>{{data.gross}}</td>
-  </tr>
-  <tr>
-    <td>Score</td>
-    <td>{{data.score}}</td>
-  </tr>
-  <tr>
-    <td><a href="{{data.imdb_link}}">IMDB Link</a></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>Genre</td>
-    <td>{{data.genre}}</td>
-  </tr>
-
-</table>
-<img src={{ url_for('static', filename = 'movie' + data.id + '.jpg') }} >
 <script language="javascript">
 function ShowTxt()
 {
@@ -124,55 +59,127 @@ function time()
 
 } 
 </script>
-</head>
-<body >
+
+  <link href="static/movie.css" rel="stylesheet" media="screen">
+<body>
+<img src={{ url_for('static', filename = 'movie' + data.id + '.jpg') }} >
+
+ <table border="1" id="customers">
+  <tr>
+    <td>Name</td>
+    <td>{{data.name}}</td>
+  </tr>
+  <tr>
+    <td>Director</td>
+    <td><a style='text-decoration:underline;color:#000000;' href="/people?id={{data.director_id}}">{{data.director}}</a></td>
+  </tr>
+  <tr>
+    <td>Stars</td>
+    <td><a style='text-decoration:underline;color:#000000;' href="/people?id={{data.stars_id}}">{{data.stars}}</a></td>
+  </tr>
+  <tr>
+    <td>Duration</td>
+    <td>{{data.year}}</td>
+  </tr>
+  <tr>
+    <td>Color</td>
+    <td>{{data.color}}</td>
+  </tr>
+  <tr>
+    <td>Content Rating</td>
+    <td>{{data.content_rating}}</td>
+  </tr>
+  <tr>
+    <td>Year</td>
+    <td>{{data.year}}</td>
+  </tr>
+  <tr>
+    <td>Language</td>
+    <td>{{data.language}}</td>
+  </tr>
+  <tr>
+    <td>Country</td>
+    <td>{{data.country}}</td>
+  </tr>
+  <tr>
+    <td>Budget</td>
+    <td>{{data.budget}}</td>
+  </tr>
+  <tr>
+    <td>Gross</td>
+    <td>{{data.gross}}</td>
+  </tr>
+  <tr>
+    <td>Score</td>
+    <td>{{data.score}}</td>
+  </tr>
+  <tr>
+    <td><a style='text-decoration:underline;color:#000000;' href="{{data.imdb_link}}">IMDB Link</a></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Genre</td>
+    <td>{{data.genre}}</td>
+  </tr>
+
+</table>
+
+<div style="clear:both;"></div>
 {% if session.logged_in %}
-<input type="button" value="comment" onClick="ShowTxt()" id="comment"/>
+
 {% if data.iflike %}
 <form action="/movie" method="get">
         <input type="text" name="id" value="{{data.id}}" style="display:none">
         <input type="text" name="cancellike" value="True" style="display:none">
-        <input class="btn btn-default" type="submit" value="has_Liked{{data.num_like}}">
+        <input class="btn btn-default" type="submit" value="has liked ({{data.num_like}})">
 </form>
 {% else %}
 <form action="/movie" method="get">
         <input type="text" name="id" value="{{data.id}}" style="display:none">
         <input type="text" name="like" value="True" style="display:none">
-        <input class="btn btn-default" type="submit" value="Like{{data.num_like}}">
+        <input  type="submit" value="like ({{data.num_like}})">
 </form>
 {% endif %}
 {% if data.iffavor %}
 <form action="/movie" method="get">
         <input type="text" name="id" value="{{data.id}}" style="display:none">
         <input type="text" name="cancelfavor" value="True" style="display:none">
-        <input class="btn btn-default" type="submit" value="has_favored{{data.num_favor}}">
+        <input  type="submit" value="has favored ({{data.num_favor}})">
 </form>
 {% else %}
 <form action="/movie" method="get">
         <input type="text" name="id" value="{{data.id}}" style="display:none">
         <input type="text" name="favor" value="True" style="display:none">
-        <input class="btn btn-default" type="submit" value="list as favorites{{data.num_favor}}">
+        <input  class="btn btn-default" type="submit" value="list as favorites ({{data.num_favor}})">
 </form>
 {% endif %}
+</br>
+<input type="button" value="comment" onClick="ShowTxt()" id="comment"/>
 {% else %}
-<p><a href="/tologin">Login to comment</a></p>
-<p><a href="/tologin">Likeit{{data.num_like}}</a></p>
-<p><a href="/tologin">List as favorites{{data.num_favor}}</a></p>
+
+<p><a href="/tologin" style="padding:5px;background-color:#c47f00;">like it ({{data.num_like}})</a></p>
+  <p><a href="/tologin" style="background-color:#c47f00;padding:5px;">list as favorites ({{data.num_favor}})</a></p>
+</br>
+<p><a href="/tologin" style="background-color:#c47f00;padding:5px;">login to comment</a></p>
 {% endif %}
-<input type="button" value="cancel" onClick="HiddenTxt()" id="cancel" style="display:none" />
+
 <form action="/comment" method="post">
-<textarea name="new_comment" rows="5" cols="20" style="display:none" id="txt">
+<textarea name="new_comment" rows="5" cols="100" style="display:none;margin-bottom:10px;background-color:#ffeac4;border:none;" id="txt">
 </textarea>
-<input class="btn btn-default" type="submit" value="submit" id="submit" onClick="time()" style="display:none" />
+<input class="btn btn-default" type="submit" value="submit" id="submit" onClick="time()" style="margin-right:10px;display:none;float:left;" />
+<input type="button" value="cancel" onClick="HiddenTxt()" id="cancel" style="display:none" />
 <input type="text" value="{{data.id}}" name = "mid" style="display:none" />
 <input type="text" value="" name = "timestamp" id="timestamp" style="display:none" />
 </form>
 
-
+<div style="clear:both;"></div>
 {% for comment in comments %}
-  <p>{{comment.user_name}}  {{comment.time}}</p>>
-  <p>{{comment.content}}</p>>
+<div class='comment'>
+  <p style="font-family:Times New Roman;font-style:italic;">{{comment.user_name}}  {{comment.time}}</p>
+  <p>{{comment.content}}</p>
+  </div>
 {% endfor %}
+
 
 
 </body>
