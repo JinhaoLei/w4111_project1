@@ -138,7 +138,7 @@ function time()
 <form action="/movie" method="get">
         <input type="text" name="id" value="{{data.id}}" style="display:none">
         <input type="text" name="like" value="True" style="display:none">
-        <input class="btn btn-default" type="submit" value="Like{{data.num_like}}">
+        <input class="btn btn-default" type="submit" value="Like ({{data.num_like}})">
 </form>
 {% endif %}
 {% if data.iffavor %}
@@ -151,13 +151,13 @@ function time()
 <form action="/movie" method="get">
         <input type="text" name="id" value="{{data.id}}" style="display:none">
         <input type="text" name="favor" value="True" style="display:none">
-        <input class="btn btn-default" type="submit" value="list as favorites{{data.num_favor}}">
+        <input class="btn btn-default" type="submit" value="List as favorites ({{data.num_favor}})">
 </form>
 {% endif %}
 {% else %}
 <p><a href="/tologin">Login to comment</a></p>
-<p><a href="/tologin">Likeit{{data.num_like}}</a></p>
-<p><a href="/tologin">List as favorites{{data.num_favor}}</a></p>
+<p><a href="/tologin">Like it ({{data.num_like}})</a></p>
+<p><a href="/tologin">List as favorites ({{data.num_favor}})</a></p>
 {% endif %}
 <input type="button" value="cancel" onClick="HiddenTxt()" id="cancel" style="display:none" />
 <form action="/comment" method="post">
