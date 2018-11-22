@@ -181,53 +181,28 @@ def movie():
   mid = int(request.values.get("id"))
   session['refer'] = str(mid)
 
-  #TODO: This route needs to get the detailed information for a single movie and display it.
-  #      Given the movie id above, you should return all attributes of this movie plus four extra fields.
-  #      The four extra fields are 'iflike', 'iffavor', 'num_like', 'num_favor'. 'iflike' and 'iffavor'
-  #      should be set as 0. 'num_like' and 'num_favor' should be set as their true numbers recored in our db.
-  #      Please note that you should also return the director, director id, stars and stars id for this movie.
-  #      These four attributes are not saved in movie table directly.
-  #Returns: A dict. Below is a hard-coded example.    
-  
-  context = {'id':'0','name':'Avatar','director':'James_Cameron', 'director_id':0, \
-  'stars':'CCH Pounder', 'stars_id':10, 'duration':'178','color':'COLOR',\
-  'content_rating':'PG-13','year':'2009','language':'English','country':'USA',\
-  'budget':'237000000','gross':'760505847','score':'7.9',\
-  'imdb_link':'http://www.imdb.com/title/tt0499549/?ref_=fn_tt_tt_1',\
-  'genre':'Sci-Fi', 'iflike':0, 'iffavor':0, 'num_like':10005, 'num_favor':433}
-
   # Get movie
-  cmd = 'SELECT * FROM movie WHERE id = (:mid)'
+  cmd = 'SELECT * FROM movie WHERE id = :mid'
   cursor = engine.execute(text(cmd), mid=mid)
   context = dict(list(zip(cursor.keys(), [unicode(item) for item in cursor.fetchone()])))
   did = int(context['did'])
   context['director_id'] = did
 
   # Get director name
-  cmd = 'SELECT name FROM people WHERE id = (:did)'
+  cmd = 'SELECT name FROM people WHERE id = :did'
   cursor = engine.execute(text(cmd), did=did)
   context['director'] = cursor.fetchone()[0]
 
   # Get cast
-  cmd = 'SELECT people.id, people.name FROM people, stars WHERE people.id = stars.id AND stars.mid = (:mid)'
+  cmd = 'SELECT people.id, people.name FROM people, stars WHERE people.id = stars.id AND stars.mid = :mid'
   cursor = engine.execute(text(cmd), mid=mid)
   context['stars_id'], context['stars'] = cursor.fetchone()
-
-  # Get num_like
-  cmd = 'SELECT COUNT(*) FROM likes WHERE mid = (:mid)'
-  cursor = engine.execute(text(cmd), mid=mid)
-  context['num_like'] = cursor.fetchone()[0]
-
-  # Get num_favor
-  cmd = 'SELECT COUNT(*) FROM favorites WHERE mid = (:mid)'
-  cursor = engine.execute(text(cmd), mid=mid)
-  context['num_favor'] = cursor.fetchone()[0]
 
   if session.has_key('logged_in') and session['logged_in']:
     # Update context['iflike']
     cmd = """
       SELECT COUNT(*) FROM users, likes
-      WHERE users.username = (:username) AND users.id = likes.uid AND likes.mid = (:mid)
+      WHERE users.username = :username AND users.id = likes.uid AND likes.mid = :mid
     """
     cursor = engine.execute(text(cmd), username=session['username'], mid=mid)
     if cursor.fetchone()[0] > 0:
@@ -238,7 +213,7 @@ def movie():
     # Update context['iffavor']
     cmd = """
       SELECT COUNT(*) FROM users, favorites
-      WHERE users.username = (:username) AND users.id = favorites.uid AND favorites.mid = (:mid)
+      WHERE users.username = :username AND users.id = favorites.uid AND favorites.mid = :mid
     """
     cursor = engine.execute(text(cmd), username=session['username'], mid=mid)
     if cursor.fetchone()[0] > 0:
@@ -248,53 +223,67 @@ def movie():
 
   if request.values.get('like'):
     context['iflike'] = 1
-    ##TODO: A user likes this movie. You should update related table.
-    #       Use session['username'] to get the username. Use id to get the movie id.
-    # Insert into 'like' table
-    # cmd = 'SELECT id FROM people where username=(:username)'
-    # cursor = engine.execute(text(cmd), uid=session['username'], mid=mid)
-    # uid = cursor.fetchone()[0]
-    # cmd = 'INSERT INTO likes VALUES (:uid, :mid)'
-    # engine.execute(text(cmd), uid=, mid=mid)
-    pass
+
+    # Insert into 'likes' table
+    cmd = 'SELECT id FROM users where username = :username'
+    cursor = engine.execute(text(cmd), username=session['username'])
+    uid = cursor.fetchone()[0]
+    cmd = 'INSERT INTO likes VALUES (:uid, :mid)'
+    engine.execute(text(cmd), uid=uid, mid=mid)
 
   if request.values.get('cancellike'):
-    
     context['iflike'] = 0
-    ##TODO: A user cancels his like on this movie. You should update related table.
-    #       Use session['username'] to get the username. Use id to get the movie id.
+
+    # Delete from 'likes' table
+    cmd = 'SELECT id FROM users where username = :username'
+    cursor = engine.execute(text(cmd), username=session['username'])
+    uid = cursor.fetchone()[0]
+    cmd = 'DELETE FROM likes WHERE uid = :uid AND mid= :mid'
+    engine.execute(text(cmd), uid=uid, mid=mid)
+
   if request.values.get('favor'):
-
     context['iffavor'] = 1
-    ##TODO: A user favors this movie. You should update related table.
-    #       Use session['username'] to get the username. Use id to get the movie id.
+
+    # Insert into 'favorites' table
+    cmd = 'SELECT id FROM users where username = :username'
+    cursor = engine.execute(text(cmd), username=session['username'])
+    uid = cursor.fetchone()[0]
+    cmd = 'INSERT INTO favorites VALUES (:uid, :mid)'
+    engine.execute(text(cmd), uid=uid, mid=mid)
+
   if request.values.get('cancelfavor'):
-
     context['iffavor'] = 0
-    ##TODO: A user cancels his favor on this movie. You should update related table.
-    #       Use session['username'] to get the username. Use id to get the movie id.
-  
-  ##TODO: Also you need to fetch all comments data related to this movie.
-  #Returns: A list of dicts. Each dict records user_name, time and content for a comment.
-  #         Below is a hard-coded example.
-  comments = [{'user_name':'leijh', 'time':'2018-10-01 15:39:20', 'content':'I like this movie.'},{'user_name':'leijh2', 'time':'2018-10-01 15:44:20', 'content':'I don\'t like this movie.'}]
 
+    # Delete from 'favorites' table
+    cmd = 'SELECT id FROM users where username = :username'
+    cursor = engine.execute(text(cmd), username=session['username'])
+    uid = cursor.fetchone()[0]
+    cmd = 'DELETE FROM favorites WHERE uid = :uid AND mid= :mid'
+    engine.execute(text(cmd), uid=uid, mid=mid)
+
+  # Get num_like
+  cmd = 'SELECT COUNT(*) FROM likes WHERE mid = :mid'
+  cursor = engine.execute(text(cmd), mid=mid)
+  context['num_like'] = cursor.fetchone()[0]
+
+  # Get num_favor
+  cmd = 'SELECT COUNT(*) FROM favorites WHERE mid = :mid'
+  cursor = engine.execute(text(cmd), mid=mid)
+  context['num_favor'] = cursor.fetchone()[0]
+
+  cmd = 'SELECT username, timestamp, content FROM comments, users WHERE mid = :mid AND uid = users.id'
+  cursor = engine.execute(text(cmd), mid=mid)
+  columns = ['user_name', 'time', 'content']
+  comments = [dict(list(zip(columns, result))) for result in cursor]
   return render_template("movie.html", data=context, comments=comments)
 
 
 @app.route('/people', methods=['GET'])
 def people():
-
-  id = int(request.values.get("id"))
-
-  #TODO: This route needs to get the detailed information for a person and display it.
-  #      Given the people id above, you should return some attributes of this person like the example below.
-  #Returns: A dict. Below is a hard-coded example.    
-  
-  context = {'id':'0','name':'James Cameron','country':'Canada','gender':'M',\
-  'birth_date':'1954-08-16','profile_pic':'James_Cameron.jpg',\
-  'bio':'James Francis Cameron (born August 16, 1954) is a Canadian filmmaker, philanthropist, and deep-sea explorer.'
-  }
+  pid = int(request.values.get("id"))
+  cmd = 'SELECT * FROM people WHERE id = :pid'
+  cursor = engine.execute(text(cmd), pid=pid)
+  context = dict(list(zip(cursor.keys(), cursor.fetchone())))
   
   return render_template("people.html", data=context)
 
@@ -307,16 +296,19 @@ def do_admin_login():
 
 @app.route('/seefavor')
 def seefavor():
-    ##TODO: Given user id, you should return all movies this user favors.
-    #       Use session['username'] to obtain the username.
-    #Returns: A list of dicts. Each dict records movie id, name and year of a movie.
-    #         Below is a hard-coded example.
-    data = [{'id':0, 'name':'Avatar', 'year':'2009'}]
+    cmd = 'SELECT id FROM users WHERE username = :username'
+    cursor = engine.execute(text(cmd), username=session['username'])
+    uid = cursor.fetchone()[0]
+
+    cmd = 'SELECT m.id, m.name, m.year FROM movie AS m, favorites AS f WHERE f.uid = :uid AND m.id = f.mid'
+    cursor = engine.execute(text(cmd), uid=uid)
+    data = [dict(list(zip(cursor.keys(), result))) for result in cursor]
+
     return render_template("seefavor.html", data=data, username=session['username'])
 
 @app.route('/login', methods=['POST'])
 def login():
-    cmd = 'SELECT COUNT(*) FROM users WHERE username=(:username) AND password=(:password)'
+    cmd = 'SELECT COUNT(*) FROM users WHERE username = :username AND password = :password'
     cursor = engine.execute(text(cmd), username=request.form['username'], password=request.form['password'])
     if cursor.fetchone()[0] > 0:
         session['logged_in'] = True
@@ -332,11 +324,19 @@ def login():
 
 @app.route('/comment', methods=['POST'])
 def comment():
+    cmd = 'SELECT MAX(id) FROM comments'
+    cursor = engine.execute(cmd)
+    cid = cursor.fetchone()[0] + 1
 
-    ##TODO: A user makes a new comment. You should update related trable.
-    #       The movie id, comment content, timestamp and username can be obtained via 
-    #       request.form['mid'], request.form['new_comment'], 
-    #       request.form['timestamp'] and session['username'].
+    cmd = 'SELECT id FROM users WHERE username = :username'
+    cursor = engine.execute(text(cmd), username=session['username'])
+    uid = cursor.fetchone()[0]
+
+    cmd = 'INSERT INTO comments VALUES (:cid, :timestamp, :mid, :uid, :content)'
+    engine.execute(text(cmd),
+                   cid=cid, timestamp=request.form['timestamp'],
+                   mid=request.form['mid'], uid=uid, content=request.form['new_comment'])
+
     return redirect('/movie?id=%s'%(request.form['mid']))
     
 
@@ -352,14 +352,14 @@ def do_sign_up():
 
 @app.route('/signup', methods=['POST','GET'])
 def signup():
-    cmd = 'SELECT COUNT(*) FROM users WHERE username=(:username)'
+    cmd = 'SELECT COUNT(*) FROM users WHERE username = :username'
     cursor = engine.execute(text(cmd), username=request.form['username'])
     if cursor.fetchone()[0] == 0:
       cmd = 'SELECT MAX(id) FROM users'
       cursor = engine.execute(cmd)
       uid = cursor.fetchone()[0] + 1
 
-      cmd = 'INSERT INTO users VALUES ((:uid), (:username), (:password), (:email))'
+      cmd = 'INSERT INTO users VALUES (:uid, :username, :password, :email)'
       engine.execute(text(cmd), uid=uid,
                      username=request.form['username'],
                      password=request.form['password'],
