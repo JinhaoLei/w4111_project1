@@ -250,6 +250,8 @@ def people():
 
 @app.route('/tologin')
 def do_admin_login():
+    if session.has_key('sign_up'):
+      del session['sign_up']
     return render_template("login.html")
 
 @app.route('/seefavor')
@@ -273,7 +275,7 @@ def login():
         else:
           return redirect('/')
     else:
-      flash('wrong password!')
+      flash('Wrong password!')
       return redirect('/tologin')
 
 
@@ -291,12 +293,13 @@ def comment():
 def do_sign_up():
     if session.has_key('sign_up'):
       sleep(1)
+      del session['sign_up']
       return redirect('/')
     else:
       return render_template("signup.html")
 
 
-@app.route('/signup', methods=['POST'])
+@app.route('/signup', methods=['POST','GET'])
 def signup():
     ##TODO: When signing up, you should check if username has been registered.
     #       If success, you should update related table. The username, password and email
@@ -305,10 +308,13 @@ def signup():
     if 1:
       #print request.form['username'], request.form['password'], request.form['email']
       flash('sign up success!')
+
       session['sign_up'] = True
+      sleep(1)
+      return redirect('/tologin')
     else:
-      flash('username has been used!')
-    return redirect('/tosignup')
+      flash('username already taken!')
+      return redirect('/tosignup')
 
 @app.route("/logout")
 def logout():
