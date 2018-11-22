@@ -1,0 +1,122 @@
+* {
+box-sizing: border-box;
+}
+ 
+*:focus {
+	outline: none;
+}
+body {
+font-family: Arial;
+background-color: #ffb327;
+padding: 50px;
+}
+
+ 
+.login-form {
+text-align: center;
+}
+.control-group {
+margin-bottom: 10px;
+text-align: center;
+}
+.searchbt {
+  width: 100px;
+}
+.menu {
+position:absolute; 
+color:#000000;
+right: 50px; 
+top: 0px;
+}
+.menu2 {
+border-style:solid;
+border-color:white;
+}
+#wrap {
+          width: 200px;
+          height:200px;
+          position: absolute;
+          left: 50%;
+          margin-left: -100px;
+          top:50%;
+          margin-top: -100px;
+}
+
+a:link {text-decoration:none;color:#ffff;}
+a:visited {text-decoration:none;color:#ffff;}
+a:hover {text-decoration:underline;color:#ffff;}
+a:active {text-decoration:underline;color:#ffff;}
+
+ 
+input {
+text-align: center;
+background-color: #ECF0F1;
+border: 2px solid transparent;
+border-radius: 3px;
+font-size: 20px;
+font-weight: 400;
+padding: 4px 0;
+width: 250px;
+transition: border .5s;
+}
+ 
+input:focus {
+box-shadow: none;
+}
+#customers
+{
+  font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+  width:50%;
+  border-collapse:collapse;
+  background-color: #ffc862;
+  border: none;
+          width: 400px;
+          position: absolute;
+          left: 50%;
+          margin-left: -200px;
+}
+#customers td, #customers th 
+{
+  font-size:1em;
+  border: none;
+  padding:3px 7px 2px 7px;
+  border:1px solid #ffba3b;
+}
+#customers th 
+{
+  border: none;
+  font-size:1.1em;
+  text-align:left;
+  padding-top:5px;
+  padding-bottom:4px;
+  background-color:#ffba3b;
+  color:#000000;
+}
+
+.btn {
+  border: 2px solid transparent;
+  background: #ffb327;
+  color: #ffffff;
+  font-size: 20px;
+  line-height: 25px;
+  padding: 10px 0;
+  text-decoration: none;
+  text-shadow: none;
+  border-radius: 3px;
+  box-shadow: none;
+  transition: 0.25s;
+  display: block;
+  width: 250px;
+  margin: 0 auto;
+}
+ 
+.searchbt:hover {
+  background-color: #da8d00;
+}
+ 
+.login-link {
+  font-size: 12px;
+  color: #444;
+  display: block;
+	margin-top: 12px;
+}
