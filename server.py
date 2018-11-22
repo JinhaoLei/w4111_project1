@@ -164,24 +164,22 @@ def search():
   name = request.values.get("name")
   #name = request.form['name']
 
-
   #cmd = 'INSERT INTO test(name) VALUES (:name1), (:name2)';
   #g.conn.execute(text(cmd), name1 = name, name2 = name);
 
-  #TODO: The key words that users want to search will be recorded by name variable above.
-  #      You should return all movies whose names match with the key words.
-  #Returns: A list with some dicts. Each dict records id, name, and year of a matched movie. 
-  #         Below is a hard-coded example.        
+  pattern = "%%%s%%" % name.lower()
+  columns = ['id', 'name', 'year']
+  cmd = 'SELECT ' + ', '.join(columns) + ' FROM movie WHERE LOWER(name) LIKE (:pattern)'
+  cursor = g.conn.execute(text(cmd), pattern=pattern)
+  context = [dict(list(zip(cursor.keys(), result))) for result in cursor]
 
-  context = [{'id':'0', 'name':'Avatar','year':'2009'}]
   return render_template('index.html', sresult=context, len_result=len(context))
 
 @app.route('/movie', methods=['GET'])
 def movie():
 
-  id = int(request.values.get("id"))
-  session['refer'] = str(id)
-
+  mid = int(request.values.get("id"))
+  session['refer'] = str(mid)
 
   #TODO: This route needs to get the detailed information for a single movie and display it.
   #      Given the movie id above, you should return all attributes of this movie plus four extra fields.
@@ -197,16 +195,69 @@ def movie():
   'budget':'237000000','gross':'760505847','score':'7.9',\
   'imdb_link':'http://www.imdb.com/title/tt0499549/?ref_=fn_tt_tt_1',\
   'genre':'Sci-Fi', 'iflike':0, 'iffavor':0, 'num_like':10005, 'num_favor':433}
+
+  # Get movie
+  cmd = 'SELECT * FROM movie WHERE id = (:mid)'
+  cursor = engine.execute(text(cmd), mid=mid)
+  context = dict(list(zip(cursor.keys(), [unicode(item) for item in cursor.fetchone()])))
+  did = int(context['did'])
+  context['director_id'] = did
+
+  # Get director name
+  cmd = 'SELECT name FROM people WHERE id = (:did)'
+  cursor = engine.execute(text(cmd), did=did)
+  context['director'] = cursor.fetchone()[0]
+
+  # Get cast
+  cmd = 'SELECT people.id, people.name FROM people, stars WHERE people.id = stars.id AND stars.mid = (:mid)'
+  cursor = engine.execute(text(cmd), mid=mid)
+  context['stars_id'], context['stars'] = cursor.fetchone()
+
+  # Get num_like
+  cmd = 'SELECT COUNT(*) FROM likes WHERE mid = (:mid)'
+  cursor = engine.execute(text(cmd), mid=mid)
+  context['num_like'] = cursor.fetchone()[0]
+
+  # Get num_favor
+  cmd = 'SELECT COUNT(*) FROM favorites WHERE mid = (:mid)'
+  cursor = engine.execute(text(cmd), mid=mid)
+  context['num_favor'] = cursor.fetchone()[0]
+
   if session.has_key('logged_in') and session['logged_in']:
-    ##TODO: Check in db if current user likes and favors this movie.
-    #       If True, you shoud set context['iflike'] and context['iffavor'] as 1.
-    pass
+    # Update context['iflike']
+    cmd = """
+      SELECT COUNT(*) FROM users, likes
+      WHERE users.username = (:username) AND users.id = likes.uid AND likes.mid = (:mid)
+    """
+    cursor = engine.execute(text(cmd), username=session['username'], mid=mid)
+    if cursor.fetchone()[0] > 0:
+        context['iflike'] = 1
+    else:
+        context['iflike'] = 0
+
+    # Update context['iffavor']
+    cmd = """
+      SELECT COUNT(*) FROM users, favorites
+      WHERE users.username = (:username) AND users.id = favorites.uid AND favorites.mid = (:mid)
+    """
+    cursor = engine.execute(text(cmd), username=session['username'], mid=mid)
+    if cursor.fetchone()[0] > 0:
+        context['iffavor'] = 1
+    else:
+        context['iffavor'] = 0
 
   if request.values.get('like'):
-    
     context['iflike'] = 1
     ##TODO: A user likes this movie. You should update related table.
     #       Use session['username'] to get the username. Use id to get the movie id.
+    # Insert into 'like' table
+    # cmd = 'SELECT id FROM people where username=(:username)'
+    # cursor = engine.execute(text(cmd), uid=session['username'], mid=mid)
+    # uid = cursor.fetchone()[0]
+    # cmd = 'INSERT INTO likes VALUES (:uid, :mid)'
+    # engine.execute(text(cmd), uid=, mid=mid)
+    pass
+
   if request.values.get('cancellike'):
     
     context['iflike'] = 0
@@ -265,9 +316,9 @@ def seefavor():
 
 @app.route('/login', methods=['POST'])
 def login():
-    ##TODO: When logging in, you should check if username matches with paswword.
-    #       Modify this 'if' statement only. It is currently a hard-coded statement.
-    if request.form['password'] == '1' and request.form['username'] == 'admin':
+    cmd = 'SELECT COUNT(*) FROM users WHERE username=(:username) AND password=(:password)'
+    cursor = engine.execute(text(cmd), username=request.form['username'], password=request.form['password'])
+    if cursor.fetchone()[0] > 0:
         session['logged_in'] = True
         session['username'] = request.form['username']
         if session['refer'] is not None:
@@ -301,14 +352,20 @@ def do_sign_up():
 
 @app.route('/signup', methods=['POST','GET'])
 def signup():
-    ##TODO: When signing up, you should check if username has been registered.
-    #       If success, you should update related table. The username, password and email
-    #       can be obtained via request.form['username'], request.form['password'] and request.form['email']
-    #       Modify this 'if' statement only.
-    if 1:
-      #print request.form['username'], request.form['password'], request.form['email']
-      flash('sign up success!')
+    cmd = 'SELECT COUNT(*) FROM users WHERE username=(:username)'
+    cursor = engine.execute(text(cmd), username=request.form['username'])
+    if cursor.fetchone()[0] == 0:
+      cmd = 'SELECT MAX(id) FROM users'
+      cursor = engine.execute(cmd)
+      uid = cursor.fetchone()[0] + 1
 
+      cmd = 'INSERT INTO users VALUES ((:uid), (:username), (:password), (:email))'
+      engine.execute(text(cmd), uid=uid,
+                     username=request.form['username'],
+                     password=request.form['password'],
+                     email=request.form['email'])
+
+      flash('sign up success!')
       session['sign_up'] = True
       sleep(1)
       return redirect('/tologin')
@@ -316,12 +373,11 @@ def signup():
       flash('username already taken!')
       return redirect('/tosignup')
 
+
 @app.route("/logout")
 def logout():
     session['logged_in'] = False
     return redirect('/')
-
-
 
 
 if __name__ == "__main__":
