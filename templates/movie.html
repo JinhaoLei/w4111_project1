@@ -1,27 +1,81 @@
 <html>
   <style>
     body{ 
-      font-size: 15pt;
+      font-size: 12pt;
       font-family: arial;
     }
   </style>
+<script language="javascript">
+function ShowTxt()
+{
+document.getElementById("txt").style.display="block";
+document.getElementById("submit").style.display="block";
+document.getElementById("cancel").style.display="block";
+document.getElementById("comment").style.display="none";
+}
+function HiddenTxt()
+{
+document.getElementById("txt").style.display="none";
+document.getElementById("txt").value="";
+document.getElementById("cancel").style.display="none";
+document.getElementById("submit").style.display="none";
+document.getElementById("comment").style.display="block";
 
 
+}
+function time()
+{
+
+   var date = new Date();
+   var sign1 = "-";
+   var sign2 = ":";
+   var year = date.getFullYear() // 年
+   var month = date.getMonth() + 1; // 月
+   var day  = date.getDate(); // 日
+   var hour = date.getHours(); // 时
+   var minutes = date.getMinutes(); // 分
+   var seconds = date.getSeconds() //秒
+
+   // 给一位数数据前面加 “0”
+   if (month >= 1 && month <= 9) {
+    month = "0" + month;
+   }
+   if (day >= 0 && day <= 9) {
+    day = "0" + day;
+   }
+   if (hour >= 0 && hour <= 9) {
+    hour = "0" + hour;
+   }
+   if (minutes >= 0 && minutes <= 9) {
+    minutes = "0" + minutes;
+   }
+   if (seconds >= 0 && seconds <= 9) {
+    seconds = "0" + seconds;
+   }
+  var currentdate = year + sign1 + month + sign1 + day + " " + hour + sign2 + minutes + sign2 + seconds
+
+  document.getElementById("timestamp").value=currentdate;
+
+
+} 
+</script>
+
+  <link href="static/movie.css" rel="stylesheet" media="screen">
 <body>
- <h1>Some famous Computer Scientists</h1>
+<img src={{ url_for('static', filename = 'movie' + data.id + '.jpg') }} >
 
- <table border="1">
+ <table border="1" id="customers">
   <tr>
     <td>Name</td>
     <td>{{data.name}}</td>
   </tr>
   <tr>
     <td>Director</td>
-    <td><a href="/people?id={{data.director_id}}">{{data.director}}</a></td>
+    <td><a style='text-decoration:underline;color:#000000;' href="/people?id={{data.director_id}}">{{data.director}}</a></td>
   </tr>
   <tr>
     <td>Stars</td>
-    <td><a href="/people?id={{data.stars_id}}">{{data.stars}}</a></td>
+    <td><a style='text-decoration:underline;color:#000000;' href="/people?id={{data.stars_id}}">{{data.stars}}</a></td>
   </tr>
   <tr>
     <td>Duration</td>
@@ -60,7 +114,7 @@
     <td>{{data.score}}</td>
   </tr>
   <tr>
-    <td><a href="{{data.imdb_link}}">IMDB Link</a></td>
+    <td><a style='text-decoration:underline;color:#000000;' href="{{data.imdb_link}}">IMDB Link</a></td>
     <td></td>
   </tr>
   <tr>
@@ -69,103 +123,63 @@
   </tr>
 
 </table>
-<img src={{ url_for('static', filename = 'movie' + data.id + '.jpg') }} >
-<script language="javascript">
-function ShowTxt()
-{
-document.getElementById("txt").style.display="block";
-document.getElementById("submit").style.display="block";
-document.getElementById("cancel").style.display="block";
-document.getElementById("comment").style.display="none";
-}
-function HiddenTxt()
-{
-document.getElementById("txt").style.display="none";
-document.getElementById("txt").value="";
-document.getElementById("cancel").style.display="none";
-document.getElementById("submit").style.display="none";
-document.getElementById("comment").style.display="block";
-}
-function time()
-{
-   var date = new Date();
-   var sign1 = "-";
-   var sign2 = ":";
-   var year = date.getFullYear() // 年
-   var month = date.getMonth() + 1; // 月
-   var day  = date.getDate(); // 日
-   var hour = date.getHours(); // 时
-   var minutes = date.getMinutes(); // 分
-   var seconds = date.getSeconds() //秒
-   // 给一位数数据前面加 “0”
-   if (month >= 1 && month <= 9) {
-    month = "0" + month;
-   }
-   if (day >= 0 && day <= 9) {
-    day = "0" + day;
-   }
-   if (hour >= 0 && hour <= 9) {
-    hour = "0" + hour;
-   }
-   if (minutes >= 0 && minutes <= 9) {
-    minutes = "0" + minutes;
-   }
-   if (seconds >= 0 && seconds <= 9) {
-    seconds = "0" + seconds;
-   }
-  var currentdate = year + sign1 + month + sign1 + day + " " + hour + sign2 + minutes + sign2 + seconds
-  document.getElementById("timestamp").value=currentdate;
-} 
-</script>
-</head>
-<body >
+
+<div style="clear:both;"></div>
 {% if session.logged_in %}
-<input type="button" value="comment" onClick="ShowTxt()" id="comment"/>
+
 {% if data.iflike %}
 <form action="/movie" method="get">
         <input type="text" name="id" value="{{data.id}}" style="display:none">
         <input type="text" name="cancellike" value="True" style="display:none">
-        <input class="btn btn-default" type="submit" value="has_Liked{{data.num_like}}">
+        <input class="btn btn-default" type="submit" value="has liked ({{data.num_like}})">
 </form>
 {% else %}
 <form action="/movie" method="get">
         <input type="text" name="id" value="{{data.id}}" style="display:none">
         <input type="text" name="like" value="True" style="display:none">
-        <input class="btn btn-default" type="submit" value="Like ({{data.num_like}})">
+        <input  type="submit" value="like ({{data.num_like}})">
 </form>
 {% endif %}
 {% if data.iffavor %}
 <form action="/movie" method="get">
         <input type="text" name="id" value="{{data.id}}" style="display:none">
         <input type="text" name="cancelfavor" value="True" style="display:none">
-        <input class="btn btn-default" type="submit" value="has_favored{{data.num_favor}}">
+        <input  type="submit" value="has favored ({{data.num_favor}})">
 </form>
 {% else %}
 <form action="/movie" method="get">
         <input type="text" name="id" value="{{data.id}}" style="display:none">
         <input type="text" name="favor" value="True" style="display:none">
-        <input class="btn btn-default" type="submit" value="List as favorites ({{data.num_favor}})">
+        <input  class="btn btn-default" type="submit" value="list as favorites ({{data.num_favor}})">
 </form>
 {% endif %}
+</br>
+<input type="button" value="comment" onClick="ShowTxt()" id="comment"/>
 {% else %}
-<p><a href="/tologin">Login to comment</a></p>
-<p><a href="/tologin">Like it ({{data.num_like}})</a></p>
-<p><a href="/tologin">List as favorites ({{data.num_favor}})</a></p>
+
+<p><a href="/tologin" style="padding:5px;background-color:#c47f00;">like it ({{data.num_like}})</a></p>
+  <p><a href="/tologin" style="background-color:#c47f00;padding:5px;">list as favorites ({{data.num_favor}})</a></p>
+</br>
+<p><a href="/tologin" style="background-color:#c47f00;padding:5px;">login to comment</a></p>
 {% endif %}
-<input type="button" value="cancel" onClick="HiddenTxt()" id="cancel" style="display:none" />
+
 <form action="/comment" method="post">
-<textarea name="new_comment" rows="5" cols="20" style="display:none" id="txt">
+<textarea name="new_comment" rows="5" cols="100" style="display:none;margin-bottom:10px;background-color:#ffeac4;border:none;" id="txt">
 </textarea>
-<input class="btn btn-default" type="submit" value="submit" id="submit" onClick="time()" style="display:none" />
+<input class="btn btn-default" type="submit" value="submit" id="submit" onClick="time()" style="margin-right:10px;display:none;float:left;" />
+<input type="button" value="cancel" onClick="HiddenTxt()" id="cancel" style="display:none" />
 <input type="text" value="{{data.id}}" name = "mid" style="display:none" />
 <input type="text" value="" name = "timestamp" id="timestamp" style="display:none" />
 </form>
 
-
+<div style="clear:both;"></div>
 {% for comment in comments %}
-  <p>{{comment.user_name}}  {{comment.time}}</p>>
-  <p>{{comment.content}}</p>>
+<div class='comment'>
+  <p style="font-family:Times New Roman;font-style:italic;">{{comment.user_name}}  {{comment.time}}</p>
+  <p>{{comment.content}}</p>
+  </div>
 {% endfor %}
+
 
 
 </body>

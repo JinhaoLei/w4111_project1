@@ -2,33 +2,49 @@
   <head>
     <title>Flask Intro - login page</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="static/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="static/style.css" rel="stylesheet" media="screen">
   </head>
   <body>
     <div class="container">
-      <h1>Please login</h1>
-      <br>
       <form action="/login" method="post">
+          <div class="login">
+          <div class="login-screen">
+          <div class="app-title">
+          <h1>Login</h1>
+          </div>
+        <div class="login-form">
+          <div class="control-group">
         <input type="text" placeholder="Username" name="username" value="{{
           request.form.username }}">
+          </div>
+          <div class="control-group">
          <input type="password" placeholder="Password" name="password" value="{{
           request.form.password }}">
+          </div>
          <input id="referrer" type="text" name="referrer" class="form-control" style="display:none;">
         <input class="btn btn-default" type="submit" value="Login">
+            <div class="signup">
+          <p><a href="/tosignup">Sign up</a></p>
+          </div>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class="flashes">
+        {% for message in messages %}
+         <div class="message_flash" style="text-align: center;color:red; padding:0px 40px 0px 0px;">{{message}}</div>
+        {% endfor %}
+    </ul>
+    {% endif %}
+  {% endwith %}
+      <br>
+          </div>
+    </div>
+  </div>
       </form>
       {% if error %}
         <p class="error"><strong>Error:</strong> {{ error }}
       {% endif %}
     </div>
-    <p><a href="/tosignup">Sign up</a></p>
-    {% with messages = get_flashed_messages() %}
-   	{% if messages %}
-    <ul class="flashes">
-        {% for message in messages %}
-         <div class="message_flash">{{ message }}</div>
-        {% endfor %}
-    </ul>
-  	{% endif %}
- 	{% endwith %}
+
   </body>
 </html>

@@ -5,12 +5,12 @@
       font-family: arial;
     }
   </style>
-
+  <link href="static/people.css" rel="stylesheet" media="screen">
 
 <body>
-
-
- <table border="1">
+  
+<img src={{ url_for('static', filename = data.profile_pic) }} >
+ <table border="1" id="customers">
   <tr>
     <td>Name</td>
     <td>{{data.name}}</td>
@@ -34,7 +34,7 @@
  
 
 </table>
-<img src={{ url_for('static', filename = data.profile_pic) }} >
+
 
 </head>
 <body >

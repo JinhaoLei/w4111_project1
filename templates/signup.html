@@ -2,20 +2,32 @@
   <head>
     <title>Flask Intro - login page</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="static/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="static/signup.css" rel="stylesheet" media="screen">
   </head>
   <body>
-    <div class="container">
-      <h1>Please signup</h1>
+    <div class="container">          
+      <div class="login">
+          <div class="login-screen">
+          <div class="app-title">
+      <h1>Signup</h1>
+    </div>
       <br>
       <form action="/signup" method="post">
+          <div class="login-form">
+          <div class="control-group">
         <input type="text" placeholder="Username" name="username" value="{{
           request.form.username }}">
+                    </div>
+          <div class="control-group">
          <input type="password" placeholder="Password" name="password" value="{{
           request.form.password }}">
+                              </div>
+                                        <div class="control-group">
           <input type="text" placeholder="Email" name="email" value="{{
           request.form.email }}">
-        <input class="btn btn-default" type="submit" value="Login">
+                              </div>
+        <input class="btn btn-default" type="submit" value="Submit">
+
       </form>
       {% if error %}
         <p class="error"><strong>Error:</strong> {{ error }}
@@ -25,10 +37,12 @@
    	{% if messages %}
     <ul class="flashes">
         {% for message in messages %}
-         <div class="message_flash">{{ message }}</div>
+         <div class="message_flash" style="text-align: center;color:red; padding:0px 40px 0px 0px;">{{ message }}</div>
         {% endfor %}
     </ul>
   	{% endif %}
  	{% endwith %}
+            </div>
+    </div>
   </body>
 </html>

@@ -6,40 +6,60 @@
     }
   </style>
 
-
+  <link href="static/index.css" rel="stylesheet" media="screen">
 <body>
- <h1>Some famous Computer Scientists</h1>
+{% if session.logged_in %}
+<div class='menu'>
+<p><a href="/seefavor" style="border-style:solid;border-color:white;padding: 4px;">my favorites</a>
+<a href="/logout" style="border-style:solid;border-color:white;padding: 4px;">logout</a></p>
+</div>
+{% else %}
+<div class='menu'>
 
+<p><a href="/tologin" style="border-style:solid;border-color:white;padding: 4px;">login</a>
+
+
+<a href="/tosignup" style="border-style:solid;border-color:white;padding: 4px;">signup</a></p>
+
+</div>
+
+
+{% endif %}
+  <div id="floater"> 
+    <div id="content">
+  <div class="control-group">
+ <h1>CMDB</h1>
+</div>
+
+
+
+
+
+<form method="GET" action="/search">
+            <div class="control-group">
+<p><input type="text" name="name"> 
+ <input class='searchbt' type="submit" value="search"></p>
+ </div>
+</form>
+
+</div>
+</div>
 {% if sresult %}
-<table border="1">
+<p style="padding:0px 0px 0px 190px;">{{len_result}} results</p>
+<table border="1" id="customers">
   <tr>
     <th>Name</th>
     <th>Year</th>
   </tr>
   {% for n in sresult %}
   <tr>
-    <td><a href="/movie?id={{n.id}}">{{n.name}}</a></td>
+    <td><a  style="color:#000000" href="/movie?id={{n.id}}">{{n.name}}</a></td>
     <td>{{n.year}}</td>
   </tr>
   {% endfor %}
 </table>
-<p>{{len_result}} results</p>>
+
 {% endif %}
-
-
-{% if session.logged_in %}
-<p><a href="/seefavor">see my favorites</a></p>
-<p><a href="/logout">logout</a></p>
-{% else %}
-<p>please login</p>
-<p><a href="/tologin">login</a></p>
-<p>please sign up</p>
-<p><a href="/tosignup">sign up</a></p>
-{% endif %}
-<form method="GET" action="/search">
-<p>Search: <input type="text" name="name"> <input type="submit" value="search"></p>
-</form>
-
 </body>
 
 
