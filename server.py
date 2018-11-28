@@ -364,26 +364,36 @@ def do_sign_up():
 
 @app.route('/signup', methods=['POST','GET'])
 def signup():
-    cmd = 'SELECT COUNT(*) FROM users WHERE username = :username'
-    cursor = engine.execute(text(cmd), username=request.form['username'])
-    if cursor.fetchone()[0] == 0:
-      cmd = 'SELECT MAX(id) FROM users'
-      cursor = engine.execute(cmd)
-      uid = cursor.fetchone()[0] + 1
-
-      cmd = 'INSERT INTO users VALUES (:uid, :username, :password, :email)'
-      engine.execute(text(cmd), uid=uid,
-                     username=request.form['username'],
-                     password=request.form['password'],
-                     email=request.form['email'])
-
-      flash('sign up success!')
-      session['sign_up'] = True
-      sleep(1)
-      return redirect('/tologin')
+    if not (4 <= len(request.form['username']) <= 16):
+        flash('username must have 4 to 16 characters!')
+        return redirect('/tosignup')
+    elif not (8 <= len(request.form['password']) <= 16):
+        flash('password must have 8 to 16 characters!')
+        return redirect('/tosignup')
+    elif not (1 <= len(request.form['email']) <= 30 and '@' in request.form['email']):
+        flash('wrong email format!')
+        return redirect('/tosignup')
     else:
-      flash('username already taken!')
-      return redirect('/tosignup')
+        cmd = 'SELECT COUNT(*) FROM users WHERE username = :username'
+        cursor = engine.execute(text(cmd), username=request.form['username'])
+        if cursor.fetchone()[0] == 0:
+          cmd = 'SELECT MAX(id) FROM users'
+          cursor = engine.execute(cmd)
+          uid = cursor.fetchone()[0] + 1
+
+          cmd = 'INSERT INTO users VALUES (:uid, :username, :password, :email)'
+          engine.execute(text(cmd), uid=uid,
+                         username=request.form['username'],
+                         password=request.form['password'],
+                         email=request.form['email'])
+
+          flash('sign up success!')
+          session['sign_up'] = True
+          sleep(1)
+          return redirect('/tologin')
+        else:
+          flash('username already taken!')
+          return redirect('/tosignup')
 
 
 @app.route("/logout")
