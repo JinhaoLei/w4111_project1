@@ -13,6 +13,7 @@ Read about it online.
 
 import os
 from sqlalchemy import *
+from sqlalchemy import exc
 from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response, session, flash
 from time import sleep
@@ -229,7 +230,10 @@ def movie():
     cursor = engine.execute(text(cmd), username=session['username'])
     uid = cursor.fetchone()[0]
     cmd = 'INSERT INTO likes VALUES (:uid, :mid)'
-    engine.execute(text(cmd), uid=uid, mid=mid)
+    try:
+        engine.execute(text(cmd), uid=uid, mid=mid)
+    except exc.IntegrityError:
+        pass
 
   if request.values.get('cancellike'):
     context['iflike'] = 0
