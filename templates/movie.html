@@ -79,7 +79,11 @@ function time()
   </tr>
   <tr>
     <td>Stars</td>
-    <td><a style='text-decoration:underline;color:#000000;' href="/people?id={{data.stars_id}}">{{data.stars}}</a></td>
+    <td>
+      {% for person in data.cast %}
+        <a style='text-decoration:underline;color:#000000;' href="/people?id={{person.people_id}}">{{person.people_name}}</a>
+      {% endfor %}
+    </td>
   </tr>
   <tr>
     <td>Duration</td>
