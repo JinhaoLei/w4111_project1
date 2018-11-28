@@ -197,7 +197,7 @@ def movie():
   # Get cast
   cmd = 'SELECT people.id, people.name FROM people, stars WHERE people.id = stars.id AND stars.mid = :mid'
   cursor = engine.execute(text(cmd), mid=mid)
-  context['stars_id'], context['stars'] = cursor.fetchone()
+  context['cast'] = [{'people_id': ret[0], 'people_name': ret[1]} for ret in cursor]
 
   if session.has_key('logged_in') and session['logged_in']:
     # Update context['iflike']
