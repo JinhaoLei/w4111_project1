@@ -11,7 +11,7 @@ background-color: #ffb327;
 padding: 50px;
 }
 
-img{
+img.poster{
   max-width:250px; width:expression_r(this.width > 250 ? "250px" : this.width); height:auto;
   float:left;
   padding:0px 50px 0px 0px;

@@ -8,8 +8,11 @@
   <link href="static/people.css" rel="stylesheet" media="screen">
 
 <body>
-  
-<img src={{ url_for('static', filename = data.profile_pic) }} >
+  <a href="/" style="">
+  <img src="static/back.png" style="max-width:80px; width:expression_r(this.width > 80 ? "80px" : this.width); height:auto;">
+</a>
+<br></br>
+<img class='poster' src={{ url_for('static', filename = 'ppic/'+data.profile_pic) }} >
  <table border="1" id="customers">
   <tr>
     <td>Name</td>
@@ -18,10 +21,6 @@
   <tr>
     <td>Country</td>
     <td>{{data.country}}</td>
-  </tr>
-  <tr>
-    <td>Gender</td>
-    <td>{{data.gender}}</td>
   </tr>
   <tr>
     <td>Birth Date</td>
