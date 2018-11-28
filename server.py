@@ -246,11 +246,7 @@ def movie():
     uid = cursor.fetchone()[0]
     cmd = 'DELETE FROM likes WHERE uid = :uid AND mid= :mid'
 
-    # Request form will get resubmitted when going back
-    try:
-        engine.execute(text(cmd), uid=uid, mid=mid)
-    except exc.IntegrityError:
-        pass
+    engine.execute(text(cmd), uid=uid, mid=mid)
 
   if request.values.get('favor'):
     context['iffavor'] = 1
@@ -260,7 +256,12 @@ def movie():
     cursor = engine.execute(text(cmd), username=session['username'])
     uid = cursor.fetchone()[0]
     cmd = 'INSERT INTO favorites VALUES (:uid, :mid)'
-    engine.execute(text(cmd), uid=uid, mid=mid)
+
+    # Request form will get resubmitted when going back
+    try:
+        engine.execute(text(cmd), uid=uid, mid=mid)
+    except exc.IntegrityError:
+        pass
 
   if request.values.get('cancelfavor'):
     context['iffavor'] = 0
